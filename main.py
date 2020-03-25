@@ -32,8 +32,11 @@ print("MAIN COMPUTATION \n")
 time = 0.0
 nb_timestep = 0
 
-# Main loop
-while(time<=input_data.t_max):
+# Infected population or not (initially yes)
+population_is_infected = True
+
+# Main loop: we stop when there is no one infected anymore
+while(population_is_infected):
 
 	print(f">> Updating simulation at time t={time} days")
 	print(f"      >>  Size of population: {population.Nb_particles}")
@@ -57,11 +60,17 @@ while(time<=input_data.t_max):
 	# Save state in h5 file
 	population.export_state_to_file(time, nb_timestep, input_data.saving_data_folder)
 
+	# Check if there is still someone infected
+	population_is_infected = population.check_if_infected()
+
 	# time update
 	time += input_data.dt
 	nb_timestep += 1
 
 print("\n")
+
+time_end = time
+print(f">> Infection has disappeared after {time_end} day \n")
 
 #---------------------------------
 # POST-TREATMENT
@@ -70,7 +79,7 @@ print("\n")
 print("POST-TREATMENT OF COMPUTATION \n")
 
 # Creating images
-plot_utils.create_png_images(input_data)
+plot_utils.create_png_images(time_end, input_data)
 
 # Generating video
 plot_utils.generate_video(input_data)

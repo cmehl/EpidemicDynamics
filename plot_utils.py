@@ -9,7 +9,7 @@ from matplotlib.collections import EllipseCollection
 
 
 
-def create_png_images(input_data):
+def create_png_images(time_end, input_data):
 
 	# Vectors used in plots
 	time_vect = []
@@ -98,13 +98,13 @@ def create_png_images(input_data):
 		ax1.fill_between(time_vect, state_4_2_1_0, state_4_2_1_0_3, color=color_s3, alpha=0.5)
 
 
-		ax1.set_xlim(0.0, input_data.t_max)
+		ax1.set_xlim(0.0, time_end)
 		ax1.set_ylim(0, input_data.population_size)
 
 		ax1.set_title("Evolution of disease", fontsize=10)
 
 		# Setting only min and max ticks
-		ax1.set_xticks([0.0, input_data.t_max])
+		ax1.set_xticks([0.0, time_end])
 		ax1.set_yticks([0.0, input_data.population_size])
 		
 		# labels

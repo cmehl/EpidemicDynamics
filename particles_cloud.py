@@ -242,7 +242,20 @@ class particles_cloud(object):
 				part.freeze()
 				part.is_prev_confined = True
 
+	#---------------------------------
+	# POPULATION STATE
+	#---------------------------------
 
+	def check_if_infected(self):
+
+		pop_infected = False
+
+		for part in self.particles_list:
+			if part.state==1 or part.state==2:
+				pop_infected = True
+				break
+
+		return pop_infected
 
 	#---------------------------------
 	# SECONDARY ROUTINES
