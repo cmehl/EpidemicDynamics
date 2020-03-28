@@ -49,6 +49,9 @@ class particle(object):
 		# Preventive confinement on or not
 		self.is_prev_confined = False
 
+		# Number of infections provoked by the particle (initially 0)
+		self.nb_infections_provoked = 0
+
 
 	#---------------------------------
 	# PARTICLE MOVEMENT

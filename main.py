@@ -40,6 +40,7 @@ while(population_is_infected):
 
 	print(f">> Updating simulation at time t={time} days")
 	print(f"      >>  Size of population: {population.Nb_particles}")
+	print(f"      >>  Effective reproduction rate: {population.R_factor:.2f}")
 	print(f"      >>  Deaths: {input_data.population_size-population.Nb_particles}")
 
 	# Move particles
@@ -56,6 +57,9 @@ while(population_is_infected):
 
 	# Remove deads
 	population.remove_deads()
+
+	# Compute R factor for current population
+	population.compute_R_factor(time, input_data)
 
 	# Save state in h5 file
 	population.export_state_to_file(time, nb_timestep, input_data.saving_data_folder)

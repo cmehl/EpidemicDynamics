@@ -32,6 +32,7 @@ def create_png_images(time_end, input_data):
 		X_vect = hf.get('X')[()]
 		Y_vect = hf.get('Y')[()]
 		PartState_vect = hf.get('STATE')[()]
+		R_factor = hf.get('R_FACTOR')[()]
 
 		# Closing h5 file
 		hf.close()
@@ -75,7 +76,7 @@ def create_png_images(time_end, input_data):
 		state_4_2_1_0 = state_4_2_1 + np.array(healthy_vect)
 		state_4_2_1_0_3 = state_4_2_1_0 + np.array(recovered_vect)
 
-		# RGB colors by state
+		# RGB colors for each state
 		color_s0 = (0, 0.44, 0.87, 1)
 		color_s1 = (1.0, 0.46, 0, 1)
 		color_s2 = (1.0, 0, 0.4, 1)
@@ -139,6 +140,9 @@ def create_png_images(time_end, input_data):
 
 		ax2.add_collection(ec)
 
+		# show R factor
+		ax2.set_title(f"$R = {R_factor:.2f}$", fontsize=8)
+
 		# Disabling axis
 		ax2.axes.get_yaxis().set_visible(False)
 		ax2.axes.get_xaxis().set_visible(False)
@@ -162,6 +166,7 @@ def create_png_images(time_end, input_data):
 		ax0.plot([0.05], [0.60], color = color_s3, ls="", marker="o", markersize=7)
 		ax0.plot([0.05], [0.75], color = color_s4, ls="", marker="o", markersize=7)
 
+		# Legend associating states with colors
 		ax0.text(0.12, 0.115, "Healthy", fontsize=8)
 		ax0.text(0.12, 0.265, "Infected without symptoms", fontsize=8)
 		ax0.text(0.12, 0.415, "Infected with symptoms", fontsize=8)

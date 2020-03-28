@@ -41,6 +41,9 @@ class particles_cloud(object):
 			new_particle = particle(part_id, state, input_data)
 			self.particles_list.append(new_particle)
 
+		# R_factor initially set to zero
+		self.R_factor = 0.0
+
 
 	#---------------------------------
 	# PEOPLE MOVEMENTS
@@ -121,29 +124,46 @@ class particles_cloud(object):
 			# Propagating infection: particle j
 			if ((self.particles_list[i].state==1 or self.particles_list[i].state==2) and
 				self.particles_list[j].state==0):
+
 				# Infection of particle j with a probability infection_contact_prob
 				rand_num = random.uniform(0.0, 1.0)
+
 				if rand_num < input_data.infection_contact_prob:
+
 					# Set state to infected without symptoms
 					self.particles_list[j].get_infected()
 					self.particles_list[j].set_infection_time(time)
+
 					# Set a random incubation period
 					incubation_period = random.uniform(input_data.incubation_period[0], 
 														input_data.incubation_period[1])
+
 					self.particles_list[j].set_incubation_period(incubation_period)
+
+					# Updating nb of particles infected by i
+					self.particles_list[i].nb_infections_provoked += 1
 
 			# Propagating infection: particle i
 			if ((self.particles_list[j].state==1 or self.particles_list[j].state==2) and
 				self.particles_list[i].state==0):
+
 				# Infection of particle j with a probability infection_contact_prob
 				rand_num = random.uniform(0.0, 1.0)
+
 				if rand_num < input_data.infection_contact_prob:
+
+					# Set state to infected without symptoms
 					self.particles_list[i].get_infected()
 					self.particles_list[i].set_infection_time(time)
 					# Set a random incubation period
+
 					incubation_period = random.uniform(input_data.incubation_period[0], 
 														input_data.incubation_period[1])
+
 					self.particles_list[i].set_incubation_period(incubation_period)
+
+					# Updating nb of particles infected by j
+					self.particles_list[j].nb_infections_provoked += 1
 
 
 	#---------------------------------
@@ -238,7 +258,7 @@ class particles_cloud(object):
 		# No need to shuffle as particles positions are already random
 		nb_confined = int(input_data.prenventive_confinement*input_data.population_size)
 		for part in self.particles_list:
-			if part.part_id<=nb_confined:
+			if part.part_id<nb_confined:
 				part.freeze()
 				part.is_prev_confined = True
 
@@ -256,6 +276,53 @@ class particles_cloud(object):
 				break
 
 		return pop_infected
+
+	#---------------------------------
+	# R-FACTOR COMPUTATION
+	#---------------------------------
+
+	def compute_R_factor(self, time, input_data):
+		""" Computation of effective reproduction factor R """
+
+		# Initializing numerator and denominator
+		total_nb_infected = 0
+		total_nb_estimated_transmissions = 0
+
+		# Loop on particles
+		for part in self.particles_list:
+			if part.state==1 or part.state==2:
+
+				# Adding to total number of particles infected
+				total_nb_infected += 1
+
+				# Infection duration so far
+				infected_since = time - part.infection_time
+				# Number of persons infected so far
+				nb_infected = part.nb_infections_provoked
+
+				# Modeling the infection duration
+				mean_duration_before_death = 0.5*(input_data.death_after_symptoms[1]+input_data.death_after_symptoms[0])
+				mean_duration_before_recov = 0.5*(input_data.recovery_after_symptoms[1]+input_data.recovery_after_symptoms[0])
+				mean_infection_duration = input_data.mortality_rate*mean_duration_before_death + (1.0-input_data.mortality_rate)*mean_duration_before_recov
+
+				# Estimation of the number of infections during the total period
+				if infected_since==0.0:
+					nb_estimated_transmissions = 0.0
+				else:
+					nb_estimated_transmissions = (mean_infection_duration*nb_infected)/infected_since
+
+				# Number of total estimated transmission for the period of infection
+				total_nb_estimated_transmissions += nb_estimated_transmissions
+
+		# R factor (by definition, if denom is zero, R is 0)
+		if(total_nb_infected==0):
+			self.R_factor = 0.0
+		else:
+			self.R_factor = total_nb_estimated_transmissions / total_nb_infected
+
+
+		return self.R_factor
+
 
 	#---------------------------------
 	# SECONDARY ROUTINES
@@ -308,6 +375,7 @@ class particles_cloud(object):
 		hf.create_dataset('VX', data=VX_vect)
 		hf.create_dataset('VY', data=VY_vect)
 		hf.create_dataset('STATE', data=PartState_vect)
+		hf.create_dataset('R_FACTOR', data=np.array((self.R_factor)))
 
 		# Close file
 		hf.close()
