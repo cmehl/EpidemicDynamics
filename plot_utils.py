@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import EllipseCollection
 
 
+#---------------------------------
+# PLOTTING FUNCTIONS
+#---------------------------------
 
 def create_png_images(time_end, input_data):
 
@@ -18,6 +21,7 @@ def create_png_images(time_end, input_data):
 	infected_with_sympt_vect = []
 	recovered_vect = []
 	deaths_vect = []
+	R_factor_vect = []
 
 	# Loop on data files
 	filelist = glob.glob(input_data.saving_data_folder + '/*.h5')
@@ -68,6 +72,7 @@ def create_png_images(time_end, input_data):
 		infected_with_sympt_vect.append(nb_infected_with_sympt)
 		recovered_vect.append(nb_recovered)
 		deaths_vect.append(nb_deaths)
+		R_factor_vect.append(R_factor)
 
 		# Cumulative vectors
 		state_4 = np.array(deaths_vect)
@@ -184,7 +189,29 @@ def create_png_images(time_end, input_data):
 		fig.savefig(input_data.saving_images_folder + "/image_step_{:05d}.png".format(nb_timestep), dpi=250)
 		plt.close(fig)
 
+	# Create a last plot with R factor against time
+	plot_R_factor(input_data, time_vect, R_factor_vect)
 
+
+
+
+def plot_R_factor(input_data, time_vect, R_factor_vect):
+
+	fig, ax = plt.subplots()
+
+	ax.plot(time_vect, R_factor_vect, color="k")
+
+	ax.set_xlabel("Time [days]", fontsize =12)
+	ax.set_ylabel("$R$ $[-]$", fontsize =12)
+
+	ax.grid(ls="--", alpha=0.5)
+
+	fig.tight_layout()
+	fig.savefig(input_data.saving_images_folder + "/R_evolution.png", dpi=500)
+
+#---------------------------------
+# VIDEO GENERATION
+#---------------------------------
 
 def generate_video(input_data):
 
