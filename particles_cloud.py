@@ -361,7 +361,7 @@ class particles_cloud(object):
 			PartState_vect[i] = self.particles_list[i].state
 
 		# File to store data of current iteration
-		file_data = save_folder + "/solution_step_{:04d}_{:3.2f}days.h5".format(nb_timestep, time)
+		file_data = save_folder + "/solutions/solution_step_{:04d}_{:3.2f}days.h5".format(nb_timestep, time)
 
 		# Open h5 file to write inside
 		hf = h5py.File(file_data, 'w')

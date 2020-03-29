@@ -3,6 +3,6 @@
 
 .DS_Store
 __pycache__
-temporal_states*
 images*
+results*
 venv

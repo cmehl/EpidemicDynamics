@@ -1,4 +1,5 @@
 import os
+import shutil
 import glob
 
 import h5py
@@ -24,7 +25,7 @@ def create_png_images(time_end, input_data):
 	R_factor_vect = []
 
 	# Loop on data files
-	filelist = glob.glob(input_data.saving_data_folder + '/*.h5')
+	filelist = glob.glob(input_data.saving_folder + '/solutions/*.h5')
 	for filename in sorted(filelist):
 
 		# Opening h5 file
@@ -186,7 +187,7 @@ def create_png_images(time_end, input_data):
 
 		# Finalizing
 		# fig.tight_layout()
-		fig.savefig(input_data.saving_images_folder + "/image_step_{:05d}.png".format(nb_timestep), dpi=250)
+		fig.savefig(input_data.saving_folder + "/images/image_step_{:05d}.png".format(nb_timestep), dpi=250)
 		plt.close(fig)
 
 	# Create a last plot with R factor against time
@@ -207,7 +208,7 @@ def plot_R_factor(input_data, time_vect, R_factor_vect):
 	ax.grid(ls="--", alpha=0.5)
 
 	fig.tight_layout()
-	fig.savefig(input_data.saving_images_folder + "/R_evolution.png", dpi=500)
+	fig.savefig(input_data.saving_folder + "/R_evolution.png", dpi=500)
 
 #---------------------------------
 # VIDEO GENERATION
@@ -215,7 +216,8 @@ def plot_R_factor(input_data, time_vect, R_factor_vect):
 
 def generate_video(input_data):
 
-	os.chdir(input_data.saving_images_folder)
+	os.chdir(input_data.saving_folder + "/images")
 	os.system("ffmpeg -r 20 -i image_step_%05d.png -vcodec mpeg4 -y movie.mp4")
-	os.chdir("..")
+	os.chdir("../..")
+	shutil.move(input_data.saving_folder + "/images/movie.mp4", input_data.saving_folder + "/movie.mp4")
 

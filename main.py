@@ -62,7 +62,7 @@ while(population_is_infected):
 	population.compute_R_factor(time, input_data)
 
 	# Save state in h5 file
-	population.export_state_to_file(time, nb_timestep, input_data.saving_data_folder)
+	population.export_state_to_file(time, nb_timestep, input_data.saving_folder)
 
 	# Check if there is still someone infected
 	population_is_infected = population.check_if_infected()
