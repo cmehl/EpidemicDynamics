@@ -11,7 +11,7 @@ from particles_cloud import particles_cloud
 #---------------------------------
 
 # Input data (and export)
-disease_type = "custom"
+disease_type = "covid19"
 input_data = input_data(disease_type)
 
 # Check input data
@@ -45,6 +45,9 @@ nb_timestep = 0
 # Infected population or not (initially yes)
 population_is_infected = True
 
+# Numerotation of saved solution
+nb_saved_sol = 0
+
 # Main loop: we stop when there is no one infected anymore
 while(population_is_infected):
 
@@ -72,7 +75,10 @@ while(population_is_infected):
 	population.compute_R_factor(time, input_data)
 
 	# Save state in h5 file
-	population.export_state_to_file(time, nb_timestep, input_data.saving_folder)
+	if abs(time-nb_saved_sol*input_data.saving_frequency)<0.9*input_data.dt:
+		population.export_state_to_file(time, nb_saved_sol, input_data.saving_folder)
+		nb_saved_sol += 1
+
 
 	# Check if there is still someone infected
 	population_is_infected = population.check_if_infected()
@@ -91,6 +97,9 @@ print(f">> Infection has disappeared after {time_end} day \n")
 #---------------------------------
 
 print("POST-TREATMENT OF COMPUTATION \n")
+
+# Sanity check of incubation times
+utils.check_incubation_times(input_data.saving_folder + "/incubation_times.txt")
 
 # Creating images
 plot_utils.create_png_images(time_end, input_data)

@@ -6,6 +6,7 @@ import scipy.spatial.distance as d
 import h5py
 
 from particle import particle
+import utils
 
 
 class particles_cloud(object):
@@ -135,10 +136,10 @@ class particles_cloud(object):
 					self.particles_list[j].set_infection_time(time)
 
 					# Set a random incubation period
-					incubation_period = random.uniform(input_data.incubation_period[0], 
-														input_data.incubation_period[1])
+					random_nb = random.uniform(0, 1)
+					incubation_period = utils.invert_cdf(random_nb, input_data.incubation_CDF)
 
-					self.particles_list[j].set_incubation_period(incubation_period)
+					self.particles_list[j].set_incubation_period(incubation_period, input_data.saving_folder)
 
 					# Updating nb of particles infected by i
 					self.particles_list[i].nb_infections_provoked += 1
@@ -156,11 +157,10 @@ class particles_cloud(object):
 					self.particles_list[i].get_infected()
 					self.particles_list[i].set_infection_time(time)
 					# Set a random incubation period
+					random_nb = random.uniform(0, 1)
+					incubation_period = utils.invert_cdf(random_nb, input_data.incubation_CDF)
 
-					incubation_period = random.uniform(input_data.incubation_period[0], 
-														input_data.incubation_period[1])
-
-					self.particles_list[i].set_incubation_period(incubation_period)
+					self.particles_list[i].set_incubation_period(incubation_period, input_data.saving_folder)
 
 					# Updating nb of particles infected by j
 					self.particles_list[j].nb_infections_provoked += 1

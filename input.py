@@ -1,5 +1,5 @@
 import sys
-
+import utils
 
 class input_data(object):
 	""" Input parameters of the simulation"""
@@ -7,8 +7,9 @@ class input_data(object):
 	def __init__(self, disease_type):
 
 		# General parameter for the simulation
-		self.population_size = 1500
+		self.population_size = 2000
 		self.saving_folder = "./results"
+		self.saving_frequency = 0.5  # days
 
 		# Domain properties
 		self.L_X = 1.0     # km
@@ -16,20 +17,18 @@ class input_data(object):
 		self.domain_size = (self.L_X, self.L_Y)
 
 		# Time control
-		self.dt = 1     # days
+		self.dt = 0.1     # days
 
 		# Particles characteristics
-		self.radius = 0.004        # km
+		self.radius = 0.002        # km
 		self.mass = 1.0            # no unit (normalization)
-		self.initial_momentum = 0.05      #  km/day-1 (no mass unit)
+		self.initial_momentum = 0.02      #  km/day-1 (no mass unit)
 
 		# Disease characteristics
 		self.patient0_position = (0.5, 0.5)
 		self.infection_contact_prob = 1.0     # [0,1] (probability)
-		self.mortality_rate = 0.05            # [0,1] (probability)
-		self.death_after_symptoms = (1.0, 3.0)             # days
-		self.incubation_period = (1.0, 4.0)         # days
-		self.recovery_after_symptoms = (3.0, 5.0)   # days
+		# Remark: infection probability can be disease dependant but also habit dependant (hand washing, etc...)
+		self.set_disease_data(disease_type)
 
 
 		# Action against epidemic
@@ -40,6 +39,39 @@ class input_data(object):
 	#---------------------------------
 	# DISEASE DATA FROM LITERATURE
 	#---------------------------------
+
+	def set_disease_data(self, disease_data):
+
+		# custom: user should set arbitrary data here
+		if disease_data=="custom": 
+
+			self.mortality_rate = 0.05            # [0,1] (probability)
+			self.death_after_symptoms = (1.0, 3.0)             # days
+			self.incubation_period = (2.0, 1.0)         # [min, max, mean, std] days
+			self.recovery_after_symptoms = (3.0, 5.0)   # days
+
+		elif disease_data=="covid19":
+
+			self.mortality_rate = 0.023            # [0,1] (probability)
+			self.death_after_symptoms = (2.0, 4.0)       # days
+			self.incubation_period = (4.0, 2.0)    # [min, max, mean, std] days
+			self.recovery_after_symptoms = (5.0, 8.0)   # days
+
+		elif disease_data=="SRAS":
+
+			self.mortality_rate = 0.15           # [0,1] (probability)
+			self.death_after_symptoms = (2.0, 4.0)       # days
+			self.incubation_period = (4.0, 2.0)    # [min, max, mean, std] days
+			self.recovery_after_symptoms = (5.0, 8.0)   # days
+
+
+		# For incubation period, we set a CDF (truncated gaussian pdf)
+		# min_val = self.incubation_period[0]
+		# max_val = self.incubation_period[1]
+		mean_val = self.incubation_period[0]
+		std_val = self.incubation_period[1]
+		self.incubation_CDF = utils.gamma_cdf(mean_val, std_val, self.saving_folder)
+
 
 	#---------------------------------
 	# CHECKING AND EXPORT OF INPUTS

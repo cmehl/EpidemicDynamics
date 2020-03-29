@@ -196,10 +196,9 @@ def create_png_images(time_end, input_data):
 		ax0.set_aspect("equal")
 
 
-
 		# Finalizing
 		# fig.tight_layout()
-		fig.savefig(input_data.saving_folder + "/images/image_step_{:05d}.png".format(nb_timestep), dpi=250)
+		fig.savefig(input_data.saving_folder + "/images/image_step_{:05d}.png".format(i_file), dpi=250)
 		plt.close(fig)
 
 		# Next file

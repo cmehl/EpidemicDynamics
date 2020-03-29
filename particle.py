@@ -114,8 +114,12 @@ class particle(object):
 		self.infection_time = time
 
 
-	def set_incubation_period(self, time):
+	def set_incubation_period(self, time, results_folder):
+		# Setting incubation time
 		self.incubation_period = time
+		# We write incubation times in a file
+		with open(results_folder + "/incubation_times.txt", "a") as f:
+			f.write(f"{self.incubation_period}\n")
 
 
 	def set_death_time(self, time):
