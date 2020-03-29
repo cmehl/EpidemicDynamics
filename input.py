@@ -44,13 +44,13 @@ class input_data(object):
 			sys.exit("Variable preventine_confinement should be in [0, 1]")
 
 		if(self.vaccination_rate <0.0 or self.vaccination_rate>1.0):
-			sys.exit("Variable preventine_confinement should be in [0, 1]")
+			sys.exit("Variable vaccination_rate should be in [0, 1]")
 
 		if(self.mortality_rate <0.0 or self.mortality_rate>1.0):
-			sys.exit("Variable preventine_confinement should be in [0, 1]")
+			sys.exit("Variable mortality_rate should be in [0, 1]")
 
 		if(self.infection_contact_prob <0.0 or self.infection_contact_prob>1.0):
-			sys.exit("Variable preventine_confinement should be in [0, 1]")
+			sys.exit("Variable infection_contact_prob should be in [0, 1]")
 
 		if(self.preventive_confinement > 0.0 and self.vaccination_rate>0.0):
 			sys.exit("There is no need to confine if a vaccine is available")
