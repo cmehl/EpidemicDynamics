@@ -123,7 +123,7 @@ class particles_cloud(object):
 
 			# Propagating infection: particle j
 			if ((self.particles_list[i].state==1 or self.particles_list[i].state==2) and
-				self.particles_list[j].state==0):
+				self.particles_list[j].state==0 and self.particles_list[j].is_vaccinated==False):
 
 				# Infection of particle j with a probability infection_contact_prob
 				rand_num = random.uniform(0.0, 1.0)
@@ -145,7 +145,7 @@ class particles_cloud(object):
 
 			# Propagating infection: particle i
 			if ((self.particles_list[j].state==1 or self.particles_list[j].state==2) and
-				self.particles_list[i].state==0):
+				self.particles_list[i].state==0 and self.particles_list[i].is_vaccinated==False):
 
 				# Infection of particle j with a probability infection_contact_prob
 				rand_num = random.uniform(0.0, 1.0)
@@ -243,7 +243,7 @@ class particles_cloud(object):
 
 
 	#---------------------------------
-	# CONFINEMENT
+	# PREVENTION MEASURES
 	#---------------------------------
 
 	def confine_symptomatics(self):
@@ -254,13 +254,22 @@ class particles_cloud(object):
 
 
 	def set_preventive_confinement(self, input_data):
-		# Confine a proportion of the confinement
+		# Confine a proportion of the population
 		# No need to shuffle as particles positions are already random
 		nb_confined = int(input_data.preventive_confinement*input_data.population_size)
 		for part in self.particles_list:
 			if part.part_id<nb_confined:
 				part.freeze()
 				part.is_prev_confined = True
+
+
+	def perform_vaccination_campaign(self, input_data):
+		# Vaccine a proportion of the population
+		# No need to shuffle as particles positions are already random
+		nb_vaccined = int(input_data.vaccination_rate*input_data.population_size)
+		for part in self.particles_list:
+			if part.part_id<nb_vaccined:
+				part.is_vaccinated = True
 
 	#---------------------------------
 	# POPULATION STATE

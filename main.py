@@ -13,6 +13,9 @@ from particles_cloud import particles_cloud
 # Input data (and export)
 input_data = input_data()
 
+# Check input data
+input_data.check_inputs()
+
 # Clean previous computation and initialize solution folder
 utils.clean_init_directory(input_data)
 
@@ -24,6 +27,9 @@ population = particles_cloud(input_data)
 
 # Preventive confinement of part of the population
 population.set_preventive_confinement(input_data)
+
+# Preventive vaccination campaign
+population.perform_vaccination_campaign(input_data)
 
 #---------------------------------
 # TIME-STEPPING

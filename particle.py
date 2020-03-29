@@ -23,8 +23,12 @@ class particle(object):
 		self.mass = input_data.mass
 
 		# Initial position is random in [0,L_X]*[0,L_Y]
-		self.x = random.uniform(0, input_data.domain_size[0])
-		self.y = random.uniform(0, input_data.domain_size[1])
+		if state==0:
+			self.x = random.uniform(0, input_data.domain_size[0])
+			self.y = random.uniform(0, input_data.domain_size[1])
+		else:
+			self.x = input_data.patient0_position[0]
+			self.y = input_data.patient0_position[1]
 
 		# Initial speed: random angle with given momentum
 		self.set_initial_push(input_data)
@@ -51,6 +55,9 @@ class particle(object):
 
 		# Number of infections provoked by the particle (initially 0)
 		self.nb_infections_provoked = 0
+
+		# Initially person is not vaccined againt disease
+		self.is_vaccinated = False
 
 
 	#---------------------------------

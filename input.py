@@ -1,3 +1,4 @@
+import sys
 
 
 class input_data(object):
@@ -23,6 +24,7 @@ class input_data(object):
 		self.initial_momentum = 0.05      #  km/day-1 (no mass unit)
 
 		# Disease characteristics
+		self.patient0_position = (0.5, 0.5)
 		self.infection_contact_prob = 1.0     # [0,1] (probability)
 		self.mortality_rate = 0.05            # [0,1] (probability)
 		self.death_after_symptoms = (1.0, 3.0)             # days
@@ -33,6 +35,25 @@ class input_data(object):
 		# Action against epidemic
 		self.preventive_confinement = 0.0         # Ratio of population initially confined       
 		self.symptomatics_confinement = False
+		self.vaccination_rate = 0.0
+
+
+	def check_inputs(self):
+
+		if(self.preventive_confinement <0.0 or self.preventive_confinement>1.0):
+			sys.exit("Variable preventine_confinement should be in [0, 1]")
+
+		if(self.vaccination_rate <0.0 or self.vaccination_rate>1.0):
+			sys.exit("Variable preventine_confinement should be in [0, 1]")
+
+		if(self.mortality_rate <0.0 or self.mortality_rate>1.0):
+			sys.exit("Variable preventine_confinement should be in [0, 1]")
+
+		if(self.infection_contact_prob <0.0 or self.infection_contact_prob>1.0):
+			sys.exit("Variable preventine_confinement should be in [0, 1]")
+
+		if(self.preventive_confinement > 0.0 and self.vaccination_rate>0.0):
+			sys.exit("There is no need to confine if a vaccine is available")
 
 
 	def export_input(self):
@@ -48,6 +69,7 @@ class input_data(object):
 			fi.write(f"Infection radius: {1000.0*self.radius} m\n\n")
 
 			fi.write("[EPIDEMIC PARAMETERS]\n")
+			fi.write(f"Initial position of patient 0: {self.patient0_position} km \n")
 			fi.write(f"Probability of infection at contact: {100*self.infection_contact_prob} %\n")
 			fi.write(f"Mortality rate: {100*self.mortality_rate} %\n")
 			fi.write(f"Incubation period: {self.incubation_period} days\n")
@@ -57,6 +79,7 @@ class input_data(object):
 			fi.write("[PREVENTION PARAMETERS]\n")
 			fi.write(f"Preventive confinement: {self.preventive_confinement} % of people\n")
 			fi.write(f"Confinement of symptomatic persons: {self.symptomatics_confinement}\n")
+			fi.write(f"Proportion of the population vaccinated: {100.0*self.vaccination_rate} %\n")
 
 
 
