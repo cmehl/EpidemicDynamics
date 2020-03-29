@@ -10,11 +10,14 @@ from particles_cloud import particles_cloud
 # INITIALIZATION
 #---------------------------------
 
-# Input data
+# Input data (and export)
 input_data = input_data()
 
 # Clean previous computation and initialize solution folder
 utils.clean_init_directory(input_data)
+
+# Export input parameters to keep track of it in results
+input_data.export_input()
 
 # Initialize population
 population = particles_cloud(input_data)

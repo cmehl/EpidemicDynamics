@@ -256,7 +256,7 @@ class particles_cloud(object):
 	def set_preventive_confinement(self, input_data):
 		# Confine a proportion of the confinement
 		# No need to shuffle as particles positions are already random
-		nb_confined = int(input_data.prenventive_confinement*input_data.population_size)
+		nb_confined = int(input_data.preventive_confinement*input_data.population_size)
 		for part in self.particles_list:
 			if part.part_id<nb_confined:
 				part.freeze()
