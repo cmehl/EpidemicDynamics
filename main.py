@@ -11,7 +11,8 @@ from particles_cloud import particles_cloud
 #---------------------------------
 
 # Input data (and export)
-input_data = input_data()
+disease_type = "custom"
+input_data = input_data(disease_type)
 
 # Check input data
 input_data.check_inputs()
@@ -82,7 +83,7 @@ while(population_is_infected):
 
 print("\n")
 
-time_end = time
+time_end = time - input_data.dt  # We remove one dt else we have a small shift on plot
 print(f">> Infection has disappeared after {time_end} day \n")
 
 #---------------------------------

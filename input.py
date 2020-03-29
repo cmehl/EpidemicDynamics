@@ -4,7 +4,7 @@ import sys
 class input_data(object):
 	""" Input parameters of the simulation"""
 
-	def __init__(self):
+	def __init__(self, disease_type):
 
 		# General parameter for the simulation
 		self.population_size = 1500
@@ -16,7 +16,7 @@ class input_data(object):
 		self.domain_size = (self.L_X, self.L_Y)
 
 		# Time control
-		self.dt = 0.2     # days
+		self.dt = 1     # days
 
 		# Particles characteristics
 		self.radius = 0.004        # km
@@ -37,6 +37,13 @@ class input_data(object):
 		self.symptomatics_confinement = False
 		self.vaccination_rate = 0.0
 
+	#---------------------------------
+	# DISEASE DATA FROM LITERATURE
+	#---------------------------------
+
+	#---------------------------------
+	# CHECKING AND EXPORT OF INPUTS
+	#---------------------------------
 
 	def check_inputs(self):
 

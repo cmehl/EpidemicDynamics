@@ -26,6 +26,8 @@ def create_png_images(time_end, input_data):
 
 	# Loop on data files
 	filelist = glob.glob(input_data.saving_folder + '/solutions/*.h5')
+	nb_files = len(filelist) # Total number of files
+	i_file = 0  # Current file number
 	for filename in sorted(filelist):
 
 		# Opening h5 file
@@ -104,6 +106,16 @@ def create_png_images(time_end, input_data):
 		ax1.fill_between(time_vect, state_4_2_1, state_4_2_1_0, color=color_s0, alpha=0.5)
 		ax1.fill_between(time_vect, state_4_2_1_0, state_4_2_1_0_3, color=color_s3, alpha=0.5)
 
+		# Last image, we display the peak value of infected people
+		if(i_file==nb_files-1):
+			# Array of total infected people
+			total_infected = np.array(infected_wo_sympt_vect) + np.array(infected_with_sympt_vect)
+			index_max_infected, max_infected = np.argmax(total_infected), np.max(total_infected)
+
+			ax1.plot([time_vect[index_max_infected]],[max_infected],
+						 marker="o", markersize=3, color='k')
+			ax1.text(time_vect[index_max_infected], 1.2*max_infected,
+						f"Peak = {max_infected}", fontsize = 6)
 
 		ax1.set_xlim(0.0, time_end)
 		ax1.set_ylim(0, input_data.population_size)
@@ -189,6 +201,9 @@ def create_png_images(time_end, input_data):
 		# fig.tight_layout()
 		fig.savefig(input_data.saving_folder + "/images/image_step_{:05d}.png".format(nb_timestep), dpi=250)
 		plt.close(fig)
+
+		# Next file
+		i_file += 1
 
 	# Create a last plot with R factor against time
 	plot_R_factor(input_data, time_vect, R_factor_vect)
