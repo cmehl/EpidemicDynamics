@@ -29,13 +29,20 @@ class particles_cloud(object):
 		# Ensemble of particles is stored in a dictionary
 		self.particles_list = []
 
-		# We make one particle to be ill
-		index_ill = random.randrange(input_data.population_size)
+		# We make somes particles to be ill (no need to be random as every particle is placed randomly)
+		list_indices = [i for i in range(input_data.population_size)]
+		random.shuffle(list_indices)
+		indices_ill = list_indices[:len(input_data.initial_infected_positions)]
+
+		# Adding an attribute to input_data in order to pass it in particle
+		input_data.infected_positions_by_id = {}
+		for i in range(len(input_data.initial_infected_positions)):
+			input_data.infected_positions_by_id[indices_ill[i]] = input_data.initial_infected_positions[i]
 
 		# Initialize cloud of particles
 		for i in range(input_data.population_size):
 			part_id = i
-			if i==index_ill:
+			if i in indices_ill:
 				state = 1
 			else:
 				state = 0

@@ -26,9 +26,9 @@ class particle(object):
 		if state==0:
 			self.x = random.uniform(0, input_data.domain_size[0])
 			self.y = random.uniform(0, input_data.domain_size[1])
-		else:
-			self.x = input_data.patient0_position[0]
-			self.y = input_data.patient0_position[1]
+		else:  # Warning: works because ill particle have lowest ID in list
+			self.x = input_data.infected_positions_by_id[part_id][0]
+			self.y = input_data.infected_positions_by_id[part_id][1]
 
 		# Initial speed: random angle with given momentum
 		self.set_initial_push(input_data)

@@ -29,15 +29,6 @@ def compute_uniform_cdf(min_val, max_val, saving_folder):
 	pdf = uniform.pdf(x_range, loc=min_val, scale=(max_val-min_val)) 
 	cdf = uniform.cdf(x_range, loc=min_val, scale=(max_val-min_val)) 
 
-	# Plot pdf to sanity check
-	fig, ax = plt.subplots()
-	ax.plot(x_range, pdf, color="k", lw=2)
-	ax.set_xlabel("days")
-	ax.set_ylabel("pdf")
-	ax.grid(ls="--", alpha=0.5)
-	ax.set_title("Uniform law")
-	fig.savefig(saving_folder + "/pdf.png", dpi=250)
-
 	# Storing cdf, pdf and x_range vectors together
 	proba_mat = np.vstack([x_range,cdf,pdf]).T
 
@@ -56,15 +47,6 @@ def compute_lognormal_cdf(mean_val, std_val, saving_folder):
 	# Cumulative distribution function
 	pdf = lognorm.pdf(x_range, s=sigma, scale=np.exp(mu)) 
 	cdf = lognorm.cdf(x_range, s=sigma, scale=np.exp(mu)) 
-
-	# Plot pdf to sanity check
-	fig, ax = plt.subplots()
-	ax.plot(x_range, pdf, color="k", lw=2)
-	ax.set_xlabel("days")
-	ax.set_ylabel("pdf")
-	ax.grid(ls="--", alpha=0.5)
-	ax.set_title("Lognormal law")
-	fig.savefig(saving_folder + "/pdf.png", dpi=250)
 
 	# Storing cdf, pdf and x_range vectors together
 	proba_mat = np.vstack([x_range,cdf,pdf]).T
@@ -88,15 +70,6 @@ def compute_gamma_cdf(mean_val, std_val, saving_folder):
 
 	# Storing cdf, pdf and x_range vectors together
 	proba_mat = np.vstack([x_range,cdf,pdf]).T
-
-	# Plot pdf to sanity check
-	fig, ax = plt.subplots()
-	ax.plot(x_range, pdf, color="k", lw=2)
-	ax.set_xlabel("days")
-	ax.set_ylabel("pdf")
-	ax.grid(ls="--", alpha=0.5)
-	ax.set_title("Gamma law")
-	fig.savefig(saving_folder + "/pdf.png", dpi=250)
 
 	return proba_mat
 
@@ -151,17 +124,29 @@ def check_disease_times(folder):
 	death_file =  folder + "/onset_to_death_times.txt"
 	recovery_file =  folder + "/onset_to_recovery_times.txt"
 
-	incubations_times = np.loadtxt(incubation_file)
-	mean_incub = np.mean(incubations_times)
-	std_incub = np.std(incubations_times)
+	try:
+		incubations_times = np.loadtxt(incubation_file)
+		mean_incub = np.mean(incubations_times)
+		std_incub = np.std(incubations_times)
+	except OSError:
+		mean_incub = 0.0
+		std_incub = 0.0
 
-	death_times = np.loadtxt(death_file)
-	mean_death = np.mean(death_times)
-	std_death = np.std(death_times)
+	try:
+		death_times = np.loadtxt(death_file)
+		mean_death = np.mean(death_times)
+		std_death = np.std(death_times)
+	except OSError:
+		mean_death = 0.0
+		std_death = 0.0
 
-	recovery_times = np.loadtxt(recovery_file)
-	mean_recov = np.mean(recovery_times)
-	std_recov = np.std(recovery_times)
+	try:
+		recovery_times = np.loadtxt(recovery_file)
+		mean_recov = np.mean(recovery_times)
+		std_recov = np.std(recovery_times)
+	except OSError:
+		mean_recov = 0.0
+		std_recov = 0.0
 
 	print(f">> Effective mean incubation time: {mean_incub} days")
 	print(f">> Effective standard deviation of incubation time: {std_incub} days\n")

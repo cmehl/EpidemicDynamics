@@ -29,14 +29,14 @@ class input_data(object):
 		self.initial_momentum = 0.02      #  km/day-1 (no mass unit)
 
 		# Disease characteristics
-		self.patient0_position = (0.5, 0.5)
-		self.infection_contact_prob = 0.8     # [0,1] (probability)
+		self.initial_infected_positions = [(0.5, 0.5), (0.505, 0.5), (0.495, 0.5)]   # As many as we want
+		self.infection_contact_prob = 0.6     # [0,1] (probability)
 		# Remark: infection probability can be disease dependant but also habit dependant (hand washing, etc...)
 		self.set_disease_data(disease_type)
 
 
 		# Action against epidemic
-		self.preventive_confinement = 0.0         # Ratio of population initially confined       
+		self.preventive_confinement = 0.5         # Ratio of population initially confined       
 		self.symptomatics_confinement = False
 		self.vaccination_rate = 0.0
 
@@ -82,11 +82,30 @@ class input_data(object):
 			self.compute_cdf(params_onset_to_death, "onset_to_death", self.onset_to_death_modeling)
 
 			# Recovery time setting (onset to recovery timing)
+			self.onset_to_recov_modeling = "Lognormal"
+			params_recovery = (12, 2)
+			self.compute_cdf(params_recovery, "onset_to_recov", self.onset_to_recov_modeling)
+
+		elif disease_data=="SRAS":
+
+			self.mortality_rate = 0.15           # [0,1] (probability)
+
+			# Incubation time setting
+			self.incubation_modeling = "Lognormal"
+			params_incubation = (5.6, 2.8)
+			self.compute_cdf(params_incubation, "incubation", self.incubation_modeling)
+
+			# Death time setting (onset to death timing)
+			self.onset_to_death_modeling = "Gamma"
+			params_onset_to_death = (14.5, 6.7)
+			self.compute_cdf(params_onset_to_death, "onset_to_death", self.onset_to_death_modeling)
+
+			# Recovery time setting (onset to recovery timing)
 			self.onset_to_recov_modeling = "Uniform"
 			params_recovery = (12, 16)
 			self.compute_cdf(params_recovery, "onset_to_recov", self.onset_to_recov_modeling)
 
-		elif disease_data=="SRAS":
+		elif disease_data=="MERS":
 
 			self.mortality_rate = 0.15           # [0,1] (probability)
 
@@ -141,7 +160,9 @@ class input_data(object):
 			fi.write(f"Infection radius: {1000.0*self.radius} m\n\n")
 
 			fi.write("[EPIDEMIC PARAMETERS]\n")
-			fi.write(f"Initial position of patient 0: {self.patient0_position} km \n")
+			fi.write("Initial position of patients: \n")
+			for i in range(len(self.initial_infected_positions)):
+				fi.write(f"     >> Patient {i}: {self.initial_infected_positions[i]} km\n")
 			fi.write(f"Probability of infection at contact: {100*self.infection_contact_prob} %\n")
 			fi.write(f"Mortality rate: {100*self.mortality_rate} %\n")
 			fi.write(f"Incubation probability law: {self.incubation_modeling} \n")
