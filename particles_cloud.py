@@ -123,7 +123,7 @@ class particles_cloud(object):
 
 
 			# Propagating infection: particle j
-			if ((self.particles_list[i].state==1 or self.particles_list[i].state==2) and
+			if ((self.particles_list[i].state==2) and
 				self.particles_list[j].state==0 and self.particles_list[j].is_vaccinated==False):
 
 				# Infection of particle j with a probability infection_contact_prob
@@ -137,7 +137,7 @@ class particles_cloud(object):
 
 					# Set a random incubation period
 					random_nb = random.uniform(0, 1)
-					incubation_period = utils.invert_cdf(random_nb, input_data.incubation_CDF)
+					incubation_period = utils.invert_cdf(random_nb, input_data.incubation_proba)
 
 					self.particles_list[j].set_incubation_period(incubation_period, input_data.saving_folder)
 
@@ -145,7 +145,7 @@ class particles_cloud(object):
 					self.particles_list[i].nb_infections_provoked += 1
 
 			# Propagating infection: particle i
-			if ((self.particles_list[j].state==1 or self.particles_list[j].state==2) and
+			if ((self.particles_list[j].state==2) and
 				self.particles_list[i].state==0 and self.particles_list[i].is_vaccinated==False):
 
 				# Infection of particle j with a probability infection_contact_prob
@@ -158,7 +158,7 @@ class particles_cloud(object):
 					self.particles_list[i].set_infection_time(time)
 					# Set a random incubation period
 					random_nb = random.uniform(0, 1)
-					incubation_period = utils.invert_cdf(random_nb, input_data.incubation_CDF)
+					incubation_period = utils.invert_cdf(random_nb, input_data.incubation_proba)
 
 					self.particles_list[i].set_incubation_period(incubation_period, input_data.saving_folder)
 
@@ -194,15 +194,18 @@ class particles_cloud(object):
 					if rand_die < input_data.mortality_rate:
 						part.will_die = True
 						# set duration after which person dies
-						death_time = random.uniform(input_data.death_after_symptoms[0],
-													input_data.death_after_symptoms[1])
-						part.set_death_time(death_time)
+						# Set a random incubation period
+						random_nb = random.uniform(0, 1)
+						death_time = utils.invert_cdf(random_nb, input_data.onset_to_death_proba)
+
+						part.set_death_time(death_time, input_data.saving_folder)
 					else:  # person recovers
 						part.will_die = False
 						# set duration after which person recovers
-						recover_time = random.uniform(input_data.recovery_after_symptoms[0],
-														input_data.recovery_after_symptoms[1])
-						part.set_recovery_time(recover_time)
+						random_nb = random.uniform(0, 1)
+						recover_time = utils.invert_cdf(random_nb, input_data.onset_to_recov_proba)
+
+						part.set_recovery_time(recover_time, input_data.saving_folder)
 
 			# Person with symptoms
 			elif part.state==2:
@@ -299,7 +302,7 @@ class particles_cloud(object):
 
 		# Loop on particles
 		for part in self.particles_list:
-			if part.state==1 or part.state==2:
+			if part.state==2:
 
 				# Adding to total number of particles infected
 				total_nb_infected += 1
@@ -310,8 +313,8 @@ class particles_cloud(object):
 				nb_infected = part.nb_infections_provoked
 
 				# Modeling the infection duration
-				mean_duration_before_death = 0.5*(input_data.death_after_symptoms[1]+input_data.death_after_symptoms[0])
-				mean_duration_before_recov = 0.5*(input_data.recovery_after_symptoms[1]+input_data.recovery_after_symptoms[0])
+				mean_duration_before_death = input_data.mean_onset_to_death
+				mean_duration_before_recov = input_data.mean_onset_to_recov
 				mean_infection_duration = input_data.mortality_rate*mean_duration_before_death + (1.0-input_data.mortality_rate)*mean_duration_before_recov
 
 				# Estimation of the number of infections during the total period

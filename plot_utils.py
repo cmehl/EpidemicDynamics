@@ -109,8 +109,7 @@ def create_png_images(time_end, input_data):
 		# Last image, we display the peak value of infected people
 		if(i_file==nb_files-1):
 			# Array of total infected people
-			total_infected = np.array(infected_wo_sympt_vect) + np.array(infected_with_sympt_vect)
-			index_max_infected, max_infected = np.argmax(total_infected), np.max(total_infected)
+			index_max_infected, max_infected = np.argmax(infected_with_sympt_vect), np.max(infected_with_sympt_vect)
 
 			ax1.plot([time_vect[index_max_infected]],[max_infected],
 						 marker="o", markersize=3, color='k')

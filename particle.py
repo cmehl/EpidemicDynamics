@@ -122,12 +122,18 @@ class particle(object):
 			f.write(f"{self.incubation_period}\n")
 
 
-	def set_death_time(self, time):
+	def set_death_time(self, time, results_folder):
 		self.death_time = time
+		# We write death times in a file
+		with open(results_folder + "/onset_to_death_times.txt", "a") as f:
+			f.write(f"{self.death_time}\n")
 
 
-	def set_recovery_time(self, time):
+	def set_recovery_time(self, time, results_folder):
 		self.recovery_time = time
+		# We write recovery times in a file
+		with open(results_folder + "/onset_to_recovery_times.txt", "a") as f:
+			f.write(f"{self.recovery_time}\n")
 
 
 	def freeze(self):

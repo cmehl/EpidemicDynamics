@@ -23,6 +23,9 @@ utils.clean_init_directory(input_data)
 # Export input parameters to keep track of it in results
 input_data.export_input()
 
+# Plot cdf of incubation time for sanity check
+input_data.plot_cdf()
+
 # Initialize population
 population = particles_cloud(input_data)
 
@@ -98,8 +101,8 @@ print(f">> Infection has disappeared after {time_end} day \n")
 
 print("POST-TREATMENT OF COMPUTATION \n")
 
-# Sanity check of incubation times
-utils.check_incubation_times(input_data.saving_folder + "/incubation_times.txt")
+# Sanity check of disease times statistics
+utils.check_disease_times(input_data.saving_folder)
 
 # Creating images
 plot_utils.create_png_images(time_end, input_data)

@@ -3,7 +3,7 @@ import os
 import shutil
 
 import numpy as np
-from scipy.stats import gamma
+from scipy.stats import gamma, lognorm, uniform
 
 import matplotlib.pyplot as plt
 
@@ -19,34 +19,15 @@ def vel_components_from_angle(vel_angle, vel_norm):
 # PROBABILITY FUNCTIONS
 #---------------------------------
 
-# def truncated_gaussian(min_val, max_val, mean_val, std_val):
 
-# 	# Input for truncated gaussian
-# 	a, b = (min_val - mean_val) / std_val, (max_val - mean_val) / std_val
+def compute_uniform_cdf(min_val, max_val, saving_folder):
 
-# 	# range of values for which CDF is computed
-# 	x_range = np.linspace(min_val,max_val,1000)
-
-# 	# Cumulative distribution function
-# 	cdf = truncnorm.cdf(x_range, a, b, loc = mean_val, scale = std_val)
-
-# 	cdf_mat = np.vstack([x_range,cdf]).T
-
-# 	return cdf_mat
-
-def gamma_cdf(mean_val, std_val, saving_folder):
-
-	# Input for gamma law
-	a = 2
-
-	# range of values for which CDF is computed
+	# range of values for which CDF is computed (100 is arbitrary and should be high enough)
 	x_range = np.linspace(0,50,1000)
 
 	# Cumulative distribution function
-	pdf = gamma.pdf(x_range, a, mean_val, std_val)
-	cdf = gamma.cdf(x_range, a, mean_val, std_val)
-
-	cdf_mat = np.vstack([x_range,cdf]).T
+	pdf = uniform.pdf(x_range, loc=min_val, scale=(max_val-min_val)) 
+	cdf = uniform.cdf(x_range, loc=min_val, scale=(max_val-min_val)) 
 
 	# Plot pdf to sanity check
 	fig, ax = plt.subplots()
@@ -54,11 +35,74 @@ def gamma_cdf(mean_val, std_val, saving_folder):
 	ax.set_xlabel("days")
 	ax.set_ylabel("pdf")
 	ax.grid(ls="--", alpha=0.5)
+	ax.set_title("Uniform law")
 	fig.savefig(saving_folder + "/pdf.png", dpi=250)
 
-	return cdf_mat
+	# Storing cdf, pdf and x_range vectors together
+	proba_mat = np.vstack([x_range,cdf,pdf]).T
+
+	return proba_mat
 
 
+def compute_lognormal_cdf(mean_val, std_val, saving_folder):
+
+	# Converting mean and std to lognormal parameters mu and sigma
+	sigma = np.sqrt( np.log( (std_val**2/mean_val**2) + 1.0 ))
+	mu = np.log(mean_val) - 0.5 * np.log( (std_val**2/mean_val**2) + 1.0 )
+
+	# range of values for which CDF is computed (100 is arbitrary and should be high enough)
+	x_range = np.linspace(0,50,1000)
+
+	# Cumulative distribution function
+	pdf = lognorm.pdf(x_range, s=sigma, scale=np.exp(mu)) 
+	cdf = lognorm.cdf(x_range, s=sigma, scale=np.exp(mu)) 
+
+	# Plot pdf to sanity check
+	fig, ax = plt.subplots()
+	ax.plot(x_range, pdf, color="k", lw=2)
+	ax.set_xlabel("days")
+	ax.set_ylabel("pdf")
+	ax.grid(ls="--", alpha=0.5)
+	ax.set_title("Lognormal law")
+	fig.savefig(saving_folder + "/pdf.png", dpi=250)
+
+	# Storing cdf, pdf and x_range vectors together
+	proba_mat = np.vstack([x_range,cdf,pdf]).T
+
+	return proba_mat
+
+
+
+def compute_gamma_cdf(mean_val, std_val, saving_folder):
+
+	# Converting mean and std to gamma parameters
+	k = (mean_val / std_val)**2
+	theta = std_val**2 / mean_val
+
+	# range of values for which CDF is computed
+	x_range = np.linspace(0,50,1000)
+
+	# Cumulative distribution function
+	pdf = gamma.pdf(x_range, a = k, scale=theta)
+	cdf = gamma.cdf(x_range, a = k, scale=theta)
+
+	# Storing cdf, pdf and x_range vectors together
+	proba_mat = np.vstack([x_range,cdf,pdf]).T
+
+	# Plot pdf to sanity check
+	fig, ax = plt.subplots()
+	ax.plot(x_range, pdf, color="k", lw=2)
+	ax.set_xlabel("days")
+	ax.set_ylabel("pdf")
+	ax.grid(ls="--", alpha=0.5)
+	ax.set_title("Gamma law")
+	fig.savefig(saving_folder + "/pdf.png", dpi=250)
+
+	return proba_mat
+
+
+
+# For a given y value, invert an abitrary CDF
 def invert_cdf(y, cdf_mat):
 	""" y is a number between 0 and 1
 	 cdf is a vector representing a CDF (growing function)
@@ -101,15 +145,32 @@ def clean_init_directory(input_data):
 
 
 
-def check_incubation_times(file_incubation):
+def check_disease_times(folder):
 
-	incubations_times = np.loadtxt(file_incubation)
+	incubation_file =  folder + "/incubation_times.txt"
+	death_file =  folder + "/onset_to_death_times.txt"
+	recovery_file =  folder + "/onset_to_recovery_times.txt"
+
+	incubations_times = np.loadtxt(incubation_file)
 	mean_incub = np.mean(incubations_times)
 	std_incub = np.std(incubations_times)
 
+	death_times = np.loadtxt(death_file)
+	mean_death = np.mean(death_times)
+	std_death = np.std(death_times)
+
+	recovery_times = np.loadtxt(recovery_file)
+	mean_recov = np.mean(recovery_times)
+	std_recov = np.std(recovery_times)
+
 	print(f">> Effective mean incubation time: {mean_incub} days")
 	print(f">> Effective standard deviation of incubation time: {std_incub} days\n")
-
+	print("")
+	print(f">> Effective mean onset to death time: {mean_death} days")
+	print(f">> Effective standard deviation of onset to death time: {std_death} days\n")
+	print("")
+	print(f">> Effective mean onset to recovery time: {mean_recov} days")
+	print(f">> Effective standard deviation of onset to recovery time: {std_recov} days\n")
 
 
 
