@@ -52,7 +52,7 @@ population_is_infected = True
 nb_saved_sol = 0
 
 # Main loop: we stop when there is no one infected anymore
-while(population_is_infected):
+while(population_is_infected and time < input_data.t_max):
 
 	print(f">> Updating simulation at time t={time} days")
 	print(f"      >>  Size of population: {population.Nb_particles}")

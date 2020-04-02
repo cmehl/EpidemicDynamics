@@ -21,6 +21,7 @@ class input_data(object):
 
 		# Time control
 		self.dt = 0.1     # days
+		self.t_max = 200.0  # days
 
 		# Particles characteristics
 		self.radius = 0.002        # km
