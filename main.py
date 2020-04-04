@@ -57,7 +57,7 @@ while(population_is_infected and time < input_data.t_max):
 	print(f">> Updating simulation at time t={time} days")
 	print(f"      >>  Size of population: {population.Nb_particles}")
 	print(f"      >>  Effective reproduction rate: {population.R_factor:.2f}")
-	print(f"      >>  Deaths: {input_data.population_size-population.Nb_particles}")
+	print(f"      >>  Deaths: {input_data.population_size-population.Nb_particles}\n")
 
 	# Move particles
 	population.move(input_data.dt)

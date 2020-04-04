@@ -10,9 +10,9 @@ class input_data(object):
 	def __init__(self, disease_type):
 
 		# General parameter for the simulation
-		self.population_size = 2000
+		self.population_size = 1000
 		self.saving_folder = "./results"
-		self.saving_frequency = 1.0  # days
+		self.saving_frequency = 0.2  # days
 
 		# Domain properties
 		self.L_X = 1.0     # km
@@ -20,23 +20,23 @@ class input_data(object):
 		self.domain_size = (self.L_X, self.L_Y)
 
 		# Time control
-		self.dt = 0.1     # days
-		self.t_max = 200.0  # days
+		self.dt = 0.05     # days
+		self.t_max = 300.0  # days
 
 		# Particles characteristics
 		self.radius = 0.002        # km
 		self.mass = 1.0            # no unit (normalization)
-		self.initial_momentum = 0.02      #  km/day-1 (no mass unit)
+		self.initial_momentum = 0.05      #  km/day-1 (no mass unit)
 
 		# Disease characteristics
 		self.initial_infected_positions = [(0.5, 0.5), (0.505, 0.5), (0.495, 0.5)]   # As many as we want
-		self.infection_contact_prob = 0.6     # [0,1] (probability)
+		self.infection_contact_prob = 0.7     # [0,1] (probability)
 		# Remark: infection probability can be disease dependant but also habit dependant (hand washing, etc...)
 		self.set_disease_data(disease_type)
 
 
 		# Action against epidemic
-		self.preventive_confinement = 0.5         # Ratio of population initially confined       
+		self.preventive_confinement = 0.0         # Ratio of population initially confined       
 		self.symptomatics_confinement = False
 		self.vaccination_rate = 0.0
 
@@ -83,7 +83,7 @@ class input_data(object):
 
 			# Recovery time setting (onset to recovery timing)
 			self.onset_to_recov_modeling = "Lognormal"
-			params_recovery = (12, 2)
+			params_recovery = (14, 6)
 			self.compute_cdf(params_recovery, "onset_to_recov", self.onset_to_recov_modeling)
 
 		elif disease_data=="SRAS":

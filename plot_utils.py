@@ -78,11 +78,12 @@ def create_png_images(time_end, input_data):
 		R_factor_vect.append(R_factor)
 
 		# Cumulative vectors
-		state_4 = np.array(deaths_vect)
-		state_4_2 = state_4 + np.array(infected_with_sympt_vect)
-		state_4_2_1 = state_4_2 + np.array(infected_wo_sympt_vect)
-		state_4_2_1_0 = state_4_2_1 + np.array(healthy_vect)
-		state_4_2_1_0_3 = state_4_2_1_0 + np.array(recovered_vect)
+		state_2 = np.array(infected_with_sympt_vect)
+		state_2_1 = state_2 + np.array(infected_wo_sympt_vect)
+		state_2_1_4 = state_2_1 + np.array(deaths_vect)
+		state_2_1_4_0 = state_2_1_4 + np.array(healthy_vect)
+		state_2_1_4_0_3 = state_2_1_4_0 + np.array(recovered_vect)
+
 
 		# RGB colors for each state
 		color_s0 = (0, 0.44, 0.87, 1)
@@ -100,11 +101,11 @@ def create_png_images(time_end, input_data):
 		ax2 = fig.add_subplot(gs[1:, :])
 
 		# GLOBAL STATISTICS
-		ax1.fill_between(time_vect, 0, state_4, color=color_s4, alpha=0.5)
-		ax1.fill_between(time_vect, state_4, state_4_2, color=color_s2, alpha=0.5)
-		ax1.fill_between(time_vect, state_4_2, state_4_2_1, color=color_s1, alpha=0.5)
-		ax1.fill_between(time_vect, state_4_2_1, state_4_2_1_0, color=color_s0, alpha=0.5)
-		ax1.fill_between(time_vect, state_4_2_1_0, state_4_2_1_0_3, color=color_s3, alpha=0.5)
+		ax1.fill_between(time_vect, 0, state_2, color=color_s2, alpha=0.5)
+		ax1.fill_between(time_vect, state_2, state_2_1, color=color_s1, alpha=0.5)
+		ax1.fill_between(time_vect, state_2_1, state_2_1_4, color=color_s4, alpha=0.5)
+		ax1.fill_between(time_vect, state_2_1_4, state_2_1_4_0, color=color_s0, alpha=0.5)
+		ax1.fill_between(time_vect, state_2_1_4_0, state_2_1_4_0_3, color=color_s3, alpha=0.5)
 
 		# Last image, we display the peak value of infected people
 		if(i_file==nb_files-1):
